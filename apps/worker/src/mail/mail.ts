@@ -4,6 +4,7 @@ import { constants } from "@/config/constants.js";
 import { renderEmail } from "./renderEmail.js";
 
 import type { EmailTemplateName, EmailJobData } from "@repo/jobs/email";
+import { mapNodeMailerError } from "@/shared/errors/mappers/index.js";
 
 const transporter = nodemailer.createTransport({
   host: env.SMTP_HOST,
@@ -33,12 +34,16 @@ const subjects: Record<EmailTemplateName, string> = {
 const sendEmail = async <T extends EmailTemplateName>(config: EmailJobData<T>) => {
   const emailHtml = renderEmail(config.template, config.data);
 
-  await transporter.sendMail({
-    from: `"${constants.appName}" <${env.SMTP_USER}>`,
-    to: config.to,
-    subject: subjects[config.template],
-    html: emailHtml,
-  });
+  try {
+    await transporter.sendMail({
+      from: `"${constants.appName}" <${env.SMTP_USER}>`,
+      to: config.to,
+      subject: subjects[config.template],
+      html: emailHtml,
+    });
+  } catch (error) {
+    throw mapNodeMailerError(error);
+  }
 };
 
 export { sendEmail };

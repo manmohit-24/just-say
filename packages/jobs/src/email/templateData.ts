@@ -1,7 +1,7 @@
 import z from "zod";
 import { emailTemplates, type EmailTemplateName } from "./templates.js";
 
-const emailTemplateDataSchemas: Record<EmailTemplateName, z._ZodType> = {
+const emailTemplateDataSchemas: Record<EmailTemplateName, z.ZodObject<z.ZodRawShape>> = {
   welcome: z.object({
     name: z.string(),
     dashboardLink: z.url(),
@@ -77,48 +77,23 @@ type EmailJobData<T extends EmailTemplateName> = {
   data: EmailTemplateData[T];
 };
 
-type EmailJobParseResult =
-  | {
-      success: true;
-      data: EmailJobData<EmailTemplateName>;
-    }
-  | {
-      success: false;
-      error: z.ZodError;
-    };
-
-function parseEmailJobData(input: unknown): EmailJobParseResult {
-  const baseResult = z
+function parseEmailJobData(input: unknown): EmailJobData<EmailTemplateName> {
+  const parsedData = z
     .object({
       to: z.email(),
-      template: z.enum(Object.keys(emailTemplates) as [EmailTemplateName, ...EmailTemplateName[]]),
+      template: z.enum(Object.keys(emailTemplates) as EmailTemplateName[]),
       data: z.unknown(),
     })
-    .safeParse(input);
+    .parse(input);
 
-  if (!baseResult.success)
-    return {
-      success: false,
-      error: baseResult.error,
-    };
+  const { to, template, data } = parsedData;
 
-  const { to, template, data } = baseResult.data;
-
-  const dataResult = emailTemplateDataSchemas[template].safeParse(data);
-
-  if (!dataResult.success)
-    return {
-      success: false,
-      error: dataResult.error,
-    };
+  const dataResult = emailTemplateDataSchemas[template].parse(data);
 
   return {
-    success: true,
-    data: {
-      to: to,
-      template: template,
-      data: dataResult.data,
-    },
+    to: to,
+    template: template,
+    data: dataResult,
   };
 }
 
