@@ -1,4 +1,4 @@
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 import type { UpdateProfileDto } from "@repo/contracts";
 
 const updateProfile = async (dto: UpdateProfileDto, id: string) => {

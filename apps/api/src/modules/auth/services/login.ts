@@ -1,13 +1,10 @@
 import ms from "ms";
 
+import { prisma, UserStatus, type User } from "@repo/db";
 import type { LoginDto } from "@repo/contracts";
-
-import { UserStatus } from "@/generated/prisma/enums.js";
-import type { User } from "@/generated/prisma/client.js";
 
 import { env } from "@/config/env.js";
 
-import { prisma } from "@/shared/prisma.js";
 import { ForbiddenError, BadRequestError } from "@/shared/errors/index.js";
 
 import { verifyPassword } from "../crypto/password.js";

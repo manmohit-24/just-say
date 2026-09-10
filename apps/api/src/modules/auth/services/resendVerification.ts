@@ -1,13 +1,11 @@
 import ms from "ms";
 
 import type { ResendVerificationlDto } from "@repo/contracts";
+import { prisma, UserStatus } from "@repo/db";
 import { emailTemplates } from "@repo/jobs/email";
-
-import { UserStatus } from "@/generated/prisma/enums.js";
 
 import { env } from "@/config/env.js";
 
-import { prisma } from "@/shared/prisma.js";
 import { logger } from "@/shared/logger.js";
 import { createEmailJob } from "@/shared/queues/email.js";
 

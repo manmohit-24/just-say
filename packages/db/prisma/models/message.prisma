@@ -1,0 +1,27 @@
+model Message {
+  id                 String        @id @default(cuid())
+  content            String
+  senderId           String?
+  receiverId         String?
+  anonymity          Anonymity     @default(NONE)
+  deletedForSender   Boolean       @default(false)
+  deletedForReceiver Boolean       @default(false)
+  status             MessageStatus @default(PENDING)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  receiver           User?         @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: SetNull)
+  sender             User?         @relation("SentMessages", fields: [senderId], references: [id], onDelete: SetNull)
+
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+enum MessageStatus {
+  PENDING
+}
+
+enum Anonymity {
+  NONE
+  ANONYMOUS
+  TRULY_ANONYMOUS
+}

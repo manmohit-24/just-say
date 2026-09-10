@@ -1,12 +1,10 @@
 import ms from "ms";
 
 import type { DeleteProfileDto } from "@repo/contracts";
+import { BadRequestError, NotFoundError } from "@/shared/errors/index.js";
 import { emailTemplates } from "@repo/jobs/email";
 
-import { UserStatus } from "@/generated/prisma/enums.js";
-
-import { prisma } from "@/shared/prisma.js";
-import { BadRequestError, NotFoundError } from "@/shared/errors/index.js";
+import { prisma, UserStatus } from "@repo/db";
 
 import { verifyPassword } from "@/modules/auth/index.js";
 import { createEmailJob } from "@/shared/queues/email.js";

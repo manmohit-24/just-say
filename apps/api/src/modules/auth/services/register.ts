@@ -2,12 +2,9 @@ import ms from "ms";
 import { nanoid } from "nanoid";
 
 import type { RegisterDto } from "@repo/contracts";
+import { prisma, UserStatus, type User } from "@repo/db";
 import { emailTemplates } from "@repo/jobs/email";
 
-import { UserStatus } from "@/generated/prisma/enums.js";
-import type { User } from "@/generated/prisma/client.js";
-
-import { prisma } from "@/shared/prisma.js";
 import { logger } from "@/shared/logger.js";
 import { ConflictError } from "@/shared/errors/ConflictError.js";
 import { createEmailJob } from "@/shared/queues/email.js";

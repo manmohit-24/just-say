@@ -1,7 +1,7 @@
 import type { ResetPasswordDto } from "@repo/contracts";
 import { emailTemplates } from "@repo/jobs/email";
 
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 import { NotFoundError } from "@/shared/errors/index.js";
 import { createEmailJob } from "@/shared/queues/email.js";
 

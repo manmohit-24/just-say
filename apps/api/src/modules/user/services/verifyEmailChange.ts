@@ -1,7 +1,7 @@
 import type { VerifyEmailChangeDto } from "@repo/contracts";
 import { emailTemplates } from "@repo/jobs/email";
 
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 import { createEmailJob } from "@/shared/queues/email.js";
 
 import { hashToken } from "@/modules/auth/crypto/token.js";

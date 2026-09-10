@@ -1,11 +1,9 @@
 import type { VerifyEmailDto } from "@repo/contracts";
 import { emailTemplates } from "@repo/jobs/email";
-
-import { UserStatus } from "@/generated/prisma/enums.js";
+import { prisma, UserStatus } from "@repo/db";
 
 import { env } from "@/config/env.js";
 
-import { prisma } from "@/shared/prisma.js";
 import { NotFoundError } from "@/shared/errors/index.js";
 import { createEmailJob } from "@/shared/queues/email.js";
 

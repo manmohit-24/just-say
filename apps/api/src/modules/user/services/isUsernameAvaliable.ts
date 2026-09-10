@@ -1,6 +1,6 @@
 import type { IsUsernameAvailableDto } from "@repo/contracts";
 
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 
 const isUsernameAvailable = async (dto: IsUsernameAvailableDto) => {
   const user = await prisma.user.findUnique({

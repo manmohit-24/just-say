@@ -3,7 +3,7 @@ import { env } from "@/config/env.js";
 
 import { logger } from "@/shared/logger.js";
 import { app } from "@/app.js";
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 import { redis } from "@/shared/redis.js";
 
 let server: ReturnType<typeof app.listen>;

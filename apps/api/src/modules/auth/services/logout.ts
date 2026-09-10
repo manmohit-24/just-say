@@ -1,4 +1,4 @@
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 
 type LogoutDTO = {
   userId: string;

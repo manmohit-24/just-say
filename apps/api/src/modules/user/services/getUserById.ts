@@ -1,5 +1,5 @@
 import { NotFoundError } from "@/shared/errors/NotFoundError.js";
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 import type { GetUserByPublicIdDto, GetUserByIdDto } from "@repo/contracts";
 
 const getUserById = async (dto: GetUserByIdDto) => {

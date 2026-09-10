@@ -1,10 +1,7 @@
-import { PrismaClientKnownRequestError } from "@/generated/prisma/internal/prismaNamespace.js";
-import { UserStatus } from "@/generated/prisma/enums.js";
-
 import type { ChangePasswordDto } from "@repo/contracts";
+import { prisma, UserStatus, Prisma } from "@repo/db";
 import { emailTemplates } from "@repo/jobs/email";
 
-import { prisma } from "@/shared/prisma.js";
 import {
   BadRequestError,
   ConflictError,
@@ -54,7 +51,7 @@ const changePassword = async (
         select: { name: true, email: true, updatedAt: true },
       });
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025")
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")
         throw new ConflictError("Password was changed by another request. Please try again.");
 
       throw error;

@@ -26,8 +26,6 @@ const envSchema = z
           .max(65535, "PORT must be between 1 and 65535.")
       ),
 
-    DATABASE_URL: z.string().trim().min(1, "DATABASE_URL is required."),
-
     CLIENT_URL: z
       .string()
       .trim()
