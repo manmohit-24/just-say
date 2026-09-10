@@ -1,14 +1,15 @@
 import ms from "ms";
 
 import type { DeleteProfileDto } from "@repo/contracts";
+import { emailTemplates } from "@repo/jobs/email";
 
-import { BadRequestError, NotFoundError } from "@/shared/errors/index.js";
 import { UserStatus } from "@/generated/prisma/enums.js";
+
 import { prisma } from "@/shared/prisma.js";
+import { BadRequestError, NotFoundError } from "@/shared/errors/index.js";
 
 import { verifyPassword } from "@/modules/auth/index.js";
-import { sendEmail } from "@/shared/mail/mail.js";
-import { templateNames } from "@/shared/mail/index.js";
+import { createEmailJob } from "@/shared/queues/email.js";
 
 const deleteProfile = async (dto: DeleteProfileDto, id: string) => {
   const { password } = dto;
@@ -47,9 +48,9 @@ const deleteProfile = async (dto: DeleteProfileDto, id: string) => {
     return { name: user.name, email: user.email };
   });
 
-  await sendEmail({
+  await createEmailJob({
     to: deletedUser.email,
-    template: templateNames.accountDeleteAlert,
+    template: emailTemplates.accountDeletionAlert,
     data: {
       name: deletedUser.name,
       date: deletionScheduledAt,

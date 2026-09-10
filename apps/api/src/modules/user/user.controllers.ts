@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 
 import type {
+  AuthorizeEmailChangeResponse,
   GetUserByIdDto,
   GetUserResponse,
   IsUsernameAvailableRespose,
@@ -14,6 +15,9 @@ import {
   deleteProfile,
   deactivateProfile,
   isUsernameAvailable,
+  requestEmailChange,
+  authorizeEmailChange,
+  verifyEmailChange,
 } from "./services/index.js";
 
 import { clearAccessCookie, clearRefreshCookie } from "../auth/cookies/clearCookies.js";
@@ -91,6 +95,34 @@ const isUsernameAvailableController = async (req: Request, res: Response) => {
   } satisfies SuccessResponse<IsUsernameAvailableRespose>);
 };
 
+const requestEmailChangeController = async (req: Request, res: Response) => {
+  const { userId } = req.auth!;
+  await requestEmailChange(userId);
+
+  res.status(200).json({
+    success: true,
+    data: null,
+  } satisfies SuccessResponse<null>);
+};
+
+const authorizeEmailChangeController = async (req: Request, res: Response) => {
+  const challengeId = await authorizeEmailChange(req.body);
+
+  res.status(200).json({
+    success: true,
+    data: { challengeId },
+  } satisfies SuccessResponse<AuthorizeEmailChangeResponse>);
+};
+
+const verifyEmailChangeController = async (req: Request, res: Response) => {
+  await verifyEmailChange(req.body);
+
+  res.status(200).json({
+    success: true,
+    data: null,
+  } satisfies SuccessResponse<null>);
+};
+
 export {
   getUserByIdController,
   getMeController,
@@ -98,4 +130,7 @@ export {
   deleteProfileController,
   deactivateProfileController,
   isUsernameAvailableController,
+  requestEmailChangeController,
+  authorizeEmailChangeController,
+  verifyEmailChangeController,
 };

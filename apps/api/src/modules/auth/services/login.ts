@@ -6,13 +6,15 @@ import { UserStatus } from "@/generated/prisma/enums.js";
 import type { User } from "@/generated/prisma/client.js";
 
 import { env } from "@/config/env.js";
+
 import { prisma } from "@/shared/prisma.js";
 import { ForbiddenError, BadRequestError } from "@/shared/errors/index.js";
 
 import { verifyPassword } from "../crypto/password.js";
 import { generateSecureToken, hashToken } from "../crypto/token.js";
 
-import { sendEmail, templateNames } from "@/shared/mail/index.js";
+import { emailTemplates } from "@repo/jobs/email";
+import { createEmailJob } from "@/shared/queues/email.js";
 
 const login = async (
   dto: LoginDto,
@@ -68,9 +70,9 @@ const login = async (
     return session;
   });
 
-  await sendEmail({
+  await createEmailJob({
     to: user.email,
-    template: isReactivation ? templateNames.reWelcome : templateNames.loginAlert,
+    template: isReactivation ? emailTemplates.welcomeBack : emailTemplates.loginAlert,
     data: {
       name: user.name,
       time: now,

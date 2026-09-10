@@ -17,3 +17,11 @@ export {
   type IsUsernameAvailableDto,
   type IsUsernameAvailableRespose,
 } from "./isUsernameAvailable.js";
+
+export {
+  authorizeEmailChangeSchema,
+  type AuthorizeEmailChangeDto,
+  type AuthorizeEmailChangeResponse,
+} from "./authorizeEmailChange.js";
+
+export { verifyEmailChangeSchema, type VerifyEmailChangeDto } from "./verifyEmailChange.js";

@@ -1,33 +1,29 @@
-import { TokenPurpose } from "@/generated/prisma/enums.js";
 import type { ResetPasswordDto } from "@repo/contracts";
+import { emailTemplates } from "@repo/jobs/email";
 
 import { prisma } from "@/shared/prisma.js";
 import { NotFoundError } from "@/shared/errors/index.js";
+import { createEmailJob } from "@/shared/queues/email.js";
 
 import { hashToken } from "../crypto/token.js";
-import { sendEmail } from "@/shared/mail/mail.js";
-import { templateNames } from "@/shared/mail/index.js";
 import { hashPassword } from "../crypto/password.js";
+import { consumePasswordResetToken } from "../redis/passwordReset.js";
 
 const resetPassword = async ({ token, newPassword }: ResetPasswordDto) => {
-  const now = new Date();
-
   const tokenHash = hashToken(token);
+
+  const userId = await consumePasswordResetToken(tokenHash);
+
+  if (!userId) throw new NotFoundError("Invalid or expired reset token");
+
   const passwordHash = await hashPassword(newPassword);
 
   const updateUser = await prisma.$transaction(async (tx) => {
-    const users = await tx.user.updateManyAndReturn({
+    const user = await tx.user.update({
       where: {
-        tokenHash,
-        tokenPurpose: TokenPurpose.PASSWORD_RESET,
-        tokenExpiresAt: {
-          gt: now,
-        },
+        id: userId,
       },
       data: {
-        tokenHash: null,
-        tokenPurpose: null,
-        tokenExpiresAt: null,
         passwordHash,
       },
       select: {
@@ -37,22 +33,20 @@ const resetPassword = async ({ token, newPassword }: ResetPasswordDto) => {
       },
     });
 
-    if (users.length === 0 || !users[0]) throw new NotFoundError("Invalid or expired reset token");
-
-    await tx.session.deleteMany({ where: { userId: users[0].id } });
+    await tx.session.deleteMany({ where: { userId: user.id } });
 
     return {
-      email: users[0].email,
-      name: users[0].name,
+      email: user.email,
+      name: user.name,
     };
   });
 
-  await sendEmail({
+  await createEmailJob({
     to: updateUser.email,
-    template: templateNames.passwordChangedAlert,
+    template: emailTemplates.passwordChangedAlert,
     data: {
       name: updateUser.name,
-      time: now,
+      time: new Date(),
     },
   });
 };

@@ -7,6 +7,7 @@ allowBuilds:
   argon2: true
   bcrypt: true
   esbuild: true
+  msgpackr-extract: true
   msw: true
   prisma: true
   sharp: true

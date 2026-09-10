@@ -5,11 +5,6 @@ enum UserStatus {
   DELETION_SCHEDULED
 }
 
-enum TokenPurpose {
-  ACTIVATION
-  PASSWORD_RESET
-}
-
 model User {
   id       String @id @default(cuid())
   publicId String @unique
@@ -24,9 +19,13 @@ model User {
   status              UserStatus @default(UNVERIFIED)
   deletionScheduledAt DateTime?
 
-  tokenHash      String?       @unique
-  tokenPurpose   TokenPurpose?
-  tokenExpiresAt DateTime?
+  // Activation state is kept in PostgreSQL because it is tied to the user's
+  // durable UNVERIFIED account state. Unlike short-lived Redis workflows such
+  // as password reset, activation must remain recoverable even if Redis data
+  // is lost or unavailable.
+
+  activationTokenHash      String?   @unique
+  activationTokenExpiresAt DateTime?
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")

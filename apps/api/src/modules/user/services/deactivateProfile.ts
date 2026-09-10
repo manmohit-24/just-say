@@ -1,12 +1,13 @@
 import type { DeactivateProfileDto } from "@repo/contracts";
+import { emailTemplates } from "@repo/jobs/email";
 
-import { BadRequestError, NotFoundError } from "@/shared/errors/index.js";
 import { UserStatus } from "@/generated/prisma/enums.js";
+
 import { prisma } from "@/shared/prisma.js";
+import { createEmailJob } from "@/shared/queues/email.js";
+import { BadRequestError, NotFoundError } from "@/shared/errors/index.js";
 
 import { verifyPassword } from "@/modules/auth/index.js";
-import { sendEmail } from "@/shared/mail/mail.js";
-import { templateNames } from "@/shared/mail/index.js";
 
 const deactivateProfile = async (dto: DeactivateProfileDto, id: string) => {
   const { password } = dto;
@@ -38,9 +39,9 @@ const deactivateProfile = async (dto: DeactivateProfileDto, id: string) => {
     return { name: user.name, email: user.email };
   });
 
-  await sendEmail({
+  await createEmailJob({
     to: deactivatedUser.email,
-    template: templateNames.accountDeactivateAlert,
+    template: emailTemplates.accountDeactivationAlert,
     data: {
       name: deactivatedUser.name,
     },

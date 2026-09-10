@@ -2,6 +2,7 @@ import { PrismaClientKnownRequestError } from "@/generated/prisma/internal/prism
 import { UserStatus } from "@/generated/prisma/enums.js";
 
 import type { ChangePasswordDto } from "@repo/contracts";
+import { emailTemplates } from "@repo/jobs/email";
 
 import { prisma } from "@/shared/prisma.js";
 import {
@@ -10,8 +11,7 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "@/shared/errors/index.js";
-import { sendEmail } from "@/shared/mail/mail.js";
-import { templateNames } from "@/shared/mail/index.js";
+import { createEmailJob } from "@/shared/queues/email.js";
 
 import { hashPassword, verifyPassword } from "../crypto/password.js";
 
@@ -71,9 +71,9 @@ const changePassword = async (
     return updatedUser;
   });
 
-  await sendEmail({
+  await createEmailJob({
     to: updatedUser.email,
-    template: templateNames.passwordChangedAlert,
+    template: emailTemplates.passwordChangedAlert,
     data: {
       name: updatedUser.name,
       time: updatedUser.updatedAt,
