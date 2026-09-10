@@ -36,6 +36,7 @@ const emailWorker = new Worker(EMAIL_QUEUE_NAME, emailJob, {
   connection: {
     url: env.REDIS_URL,
   },
+  concurrency: 10,
 });
 
 emailWorker.on("completed", (job) => {
