@@ -12,9 +12,7 @@ import { createEmailJob } from "@/shared/queues/email.js";
 const deleteProfile = async (dto: DeleteProfileDto, id: string) => {
   const { password } = dto;
 
-  // for better ux, we are rounding off the time to 12 am of next day
-  const deletionScheduledAt = new Date(Date.now() + ms("8d"));
-  deletionScheduledAt.setHours(0, 0, 0, 0);
+  const deletionScheduledAt = new Date(Date.now() + ms("7d"));
 
   const deletedUser = await prisma.$transaction(async (tx) => {
     const user = await tx.user.findUnique({
