@@ -11,8 +11,9 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
     "dev": "tsc -w -p tsconfig.json",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
     "generate": "prisma generate",
     "validate": "prisma validate",
     "format": "prisma format",

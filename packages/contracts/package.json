@@ -13,9 +13,7 @@
   },
   "scripts": {
     "dev": "tsc -w -p tsconfig.json",
-    "build": "tsc -p tsconfig.json"
-  },
-  "dependencies": {
-    "zod": "^4.4.3"
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit"
   }
 }

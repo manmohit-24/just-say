@@ -16,11 +16,6 @@
     "build": "tsc -p tsconfig.json"
   },
   "devDependencies": {
-    "@types/node": "^20.19.43",
-    "tsx": "^4.23.0",
-    "typescript": "^7.0.2"
-  },
-  "dependencies": {
-    "zod": "^4.4.3"
+    "@types/node": "^20.19.43"
   }
 }
