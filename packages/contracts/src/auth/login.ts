@@ -12,7 +12,6 @@ type LoginResponse = {
   name: string;
   email: string;
   username: string;
-  publicId: string;
 };
 
 export { loginSchema };

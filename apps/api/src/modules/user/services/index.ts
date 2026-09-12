@@ -1,4 +1,4 @@
-export { getUserByPublicId, getUserById } from "./getUserById.js";
+export { getUser } from "./getUser.js";
 export { updateProfile } from "./updateProfile.js";
 export { deleteProfile } from "./deleteProfile.js";
 export { deactivateProfile } from "./deactivateProfile.js";

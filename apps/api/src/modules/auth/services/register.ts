@@ -1,8 +1,7 @@
 import ms from "ms";
-import { nanoid } from "nanoid";
 
 import type { RegisterDto } from "@repo/contracts";
-import { prisma, UserStatus, type User } from "@repo/db";
+import { prisma, UserStatus } from "@repo/db";
 import { emailTemplates } from "@repo/jobs/email";
 
 import { logger } from "@/shared/logger.js";
@@ -35,15 +34,12 @@ const register = async (dto: RegisterDto) => {
   const passwordHash = await hashPassword(password);
   const deletionScheduledAt = new Date(now.getTime() + ms("1d"));
 
-  const publicId = `usr_${nanoid(16)}`;
-
   const user = await prisma.user.create({
     data: {
       name,
       username,
       email,
       passwordHash,
-      publicId,
       isAcceptingMessages: false,
       status: UserStatus.UNVERIFIED,
       deletionScheduledAt,
@@ -68,7 +64,7 @@ const register = async (dto: RegisterDto) => {
     },
   });
 
-  return { name, username, email, publicId };
+  return { name, username, email };
 };
 
 export { register };

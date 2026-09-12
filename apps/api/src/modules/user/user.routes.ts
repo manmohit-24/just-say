@@ -4,7 +4,7 @@ import {
   authorizeEmailChangeSchema,
   deactivateProfileSchema,
   deleteProfileSchema,
-  getUserByPublicIdSchema,
+  getUserSchema,
   isUsernameAvailableSchema,
   updateProfileSchema,
   verifyEmailChangeSchema,
@@ -18,7 +18,7 @@ import {
   deactivateProfileController,
   deleteProfileController,
   getMeController,
-  getUserByIdController,
+  getUserController,
   isUsernameAvailableController,
   requestEmailChangeController,
   updateProfileController,
@@ -193,6 +193,6 @@ userRouter.get("/update-email", async (req: Request, res: Response) => {
   `);
 });
 
-userRouter.get("/:id", validateParams(getUserByPublicIdSchema), getUserByIdController);
+userRouter.get("/:id", validateParams(getUserSchema), getUserController);
 
 export { userRouter };

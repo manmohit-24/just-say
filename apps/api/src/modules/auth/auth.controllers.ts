@@ -48,7 +48,6 @@ const loginController = async (req: Request, res: Response) => {
       name: user.name,
       email: user.email,
       username: user.username,
-      publicId: user.publicId,
     },
   } satisfies SuccessResponse<LoginResponse>);
 };

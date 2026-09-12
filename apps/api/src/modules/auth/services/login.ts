@@ -84,7 +84,6 @@ const login = async (
       name: user.name,
       username: user.username,
       email: user.email,
-      publicId: user.publicId,
     },
     session: {
       id: session.id,
