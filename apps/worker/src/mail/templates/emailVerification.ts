@@ -14,8 +14,8 @@ export const emailVerificationTemplate = `<!DOCTYPE html>
     <p style="{{styles.paragraph}}">Hi {{name}},</p>
 
     <p style="{{styles.paragraph}}">
-      Welcome to {{appName}}. Click the button below to verify your email address and activate
-      your account.
+      Thanks for signing up for {{appName}}. Click the button below to verify your email
+      address and activate your account.
     </p>
 
     <div style="{{styles.centeredSection}}">
@@ -25,14 +25,33 @@ export const emailVerificationTemplate = `<!DOCTYPE html>
     </div>
 
     <p style="{{styles.paragraph}}">
-      This verification link is valid until {{formatDate date}}.
+      This verification link is valid for 30 minutes and will expire on
+      {{formatDate tokenExpiresAt}}.
     </p>
 
     <p style="{{styles.paragraph}}">
-      If the button doesn’t work, copy and paste the following link into your browser:
+      If this verification link expires, you can request a new verification link by
+      logging in with your correct credentials.
     </p>
 
-    <p style="{{styles.link}}">{{verificationUrl}}</p>
+    <p style="{{styles.paragraph}}">
+      Please verify your email address before {{formatDate deletionScheduledAt}}.
+      Your account will be automatically deleted if it has not been verified by then.
+    </p>
+
+    <p style="{{styles.paragraph}}">
+      If the button doesn't work, copy and paste the following link into your browser:
+    </p>
+
+    <p style="{{styles.link}}">
+      <a href="{{verificationUrl}}" style="{{styles.link}}">
+        {{verificationUrl}}
+      </a>
+    </p>
+
+    <p style="{{styles.paragraph}}">
+      If you didn't create an account with {{appName}}, you can safely ignore this email.
+    </p>
   </div>
 
   <p style="{{styles.footer}}">Securely powered by {{appName}}</p>

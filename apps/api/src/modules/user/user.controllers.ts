@@ -2,15 +2,14 @@ import type { Request, Response } from "express";
 
 import type {
   AuthorizeEmailChangeResponse,
-  GetUserByIdDto,
+  GetUserDto,
   GetUserResponse,
   IsUsernameAvailableRespose,
   SuccessResponse,
 } from "@repo/contracts";
 
 import {
-  getUserByPublicId,
-  getUserById,
+  getUser,
   updateProfile,
   deleteProfile,
   deactivateProfile,
@@ -22,21 +21,21 @@ import {
 
 import { clearAccessCookie, clearRefreshCookie } from "../auth/cookies/clearCookies.js";
 
-const getUserByIdController = async (req: Request<GetUserByIdDto>, res: Response) => {
+const getUserController = async (req: Request<GetUserDto>, res: Response) => {
   const { id } = req.params;
 
-  const data = await getUserByPublicId({ id });
+  const data = await getUser({ id });
 
   res.status(200).json({
     success: true,
-    data,
+    data: { username: data.username, name: data.name },
   } satisfies SuccessResponse<GetUserResponse>);
 };
 
 const getMeController = async (req: Request, res: Response) => {
   const { userId } = req.auth!;
 
-  const data = await getUserById({ id: userId });
+  const data = await getUser({ id: userId });
 
   res.status(200).json({
     success: true,
@@ -124,7 +123,7 @@ const verifyEmailChangeController = async (req: Request, res: Response) => {
 };
 
 export {
-  getUserByIdController,
+  getUserController,
   getMeController,
   updateProfileController,
   deleteProfileController,

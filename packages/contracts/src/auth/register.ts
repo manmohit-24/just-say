@@ -14,7 +14,6 @@ type RegisterResponse = {
   name: string;
   email: string;
   username: string;
-  publicId: string;
 };
 
 export { registerSchema };

@@ -1,7 +1,7 @@
 import z from "zod";
 import { emailTemplates, type EmailTemplateName } from "./templates.js";
 
-const emailTemplateDataSchemas: Record<EmailTemplateName, z.ZodObject<z.ZodRawShape>> = {
+const emailTemplateDataSchemas = {
   welcome: z.object({
     name: z.string(),
     dashboardLink: z.url(),
@@ -22,7 +22,8 @@ const emailTemplateDataSchemas: Record<EmailTemplateName, z.ZodObject<z.ZodRawSh
   emailVerification: z.object({
     name: z.string(),
     verificationUrl: z.url(),
-    date: z.coerce.date(),
+    deletionScheduledAt: z.coerce.date(),
+    tokenExpiresAt: z.coerce.date(),
   }),
 
   passwordReset: z.object({

@@ -1,10 +1,8 @@
 import type { DeactivateProfileDto } from "@repo/contracts";
+import { createEmailJob } from "@/shared/queues/email.js";
 import { emailTemplates } from "@repo/jobs/email";
 
-import { UserStatus } from "@/generated/prisma/enums.js";
-
-import { prisma } from "@/shared/prisma.js";
-import { createEmailJob } from "@/shared/queues/email.js";
+import { prisma, UserStatus } from "@repo/db";
 import { BadRequestError, NotFoundError } from "@/shared/errors/index.js";
 
 import { verifyPassword } from "@/modules/auth/index.js";

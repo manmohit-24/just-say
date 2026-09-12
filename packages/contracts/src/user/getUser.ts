@@ -1,23 +1,16 @@
 import { z } from "zod";
-import { userPublicIdSchema } from "../validation/fields.js";
 
-const getUserByIdSchema = z.object({
+const getUserSchema = z.object({
   id: z.cuid2(),
 });
 
-type GetUserByIdDto = z.infer<typeof getUserByIdSchema>;
-
-const getUserByPublicIdSchema = z.object({
-  id: userPublicIdSchema,
-});
-
-type GetUserByPublicIdDto = z.infer<typeof getUserByPublicIdSchema>;
+type GetUserDto = z.infer<typeof getUserSchema>;
 
 type GetUserResponse = {
   name: string;
   username: string;
-  publicId: string;
+  email?: string;
 };
 
-export { getUserByPublicIdSchema, getUserByIdSchema };
-export type { GetUserByPublicIdDto, GetUserByIdDto, GetUserResponse };
+export { getUserSchema };
+export type { GetUserDto, GetUserResponse };

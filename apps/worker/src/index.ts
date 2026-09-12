@@ -1,6 +1,9 @@
 import { env } from "./config/env.js";
 import { emailWorker } from "./emailWorker.js";
 import { logger } from "./shared/logger.js";
+import { startCleanupScheduler } from "./cleanup/index.js";
+
+startCleanupScheduler();
 
 logger.info({ env: env.NODE_ENV }, "Wokers started");
 

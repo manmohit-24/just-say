@@ -1,13 +1,10 @@
 import { emailTemplates } from "@repo/jobs/email";
-
-import { UserStatus } from "@/generated/prisma/enums.js";
+import { prisma, UserStatus } from "@repo/db";
 
 import { env } from "@/config/env.js";
 
 import { NotFoundError } from "@/shared/errors/NotFoundError.js";
 import { createEmailJob } from "@/shared/queues/email.js";
-import { prisma } from "@/shared/prisma.js";
-
 import { generateSecureToken, hashToken } from "@/modules/auth/crypto/token.js";
 
 import { storeEmailChangeAuthToken } from "../redis/emailChangeAuth.js";

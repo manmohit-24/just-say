@@ -7,7 +7,6 @@ import {
   login,
   logout,
   verifyEmail,
-  resendVerification,
   forgotPassword,
   resetPassword,
   changePassword,
@@ -49,7 +48,6 @@ const loginController = async (req: Request, res: Response) => {
       name: user.name,
       email: user.email,
       username: user.username,
-      publicId: user.publicId,
     },
   } satisfies SuccessResponse<LoginResponse>);
 };
@@ -68,15 +66,6 @@ const logoutController = async (req: Request, res: Response) => {
 
 const verifyEmailController = async (req: Request, res: Response) => {
   await verifyEmail(req.body);
-
-  res.status(200).json({
-    success: true,
-    data: null,
-  } satisfies SuccessResponse<null>);
-};
-
-const resendVerificationController = async (req: Request, res: Response) => {
-  await resendVerification(req.body);
 
   res.status(200).json({
     success: true,
@@ -140,7 +129,6 @@ export {
   loginController,
   logoutController,
   verifyEmailController,
-  resendVerificationController,
   forgotPasswordController,
   resetPasswordController,
   refreshAccessTokenController,

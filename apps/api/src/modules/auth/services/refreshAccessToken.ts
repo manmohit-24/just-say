@@ -1,4 +1,4 @@
-import { prisma } from "@/shared/prisma.js";
+import { prisma } from "@repo/db";
 import { generateSecureToken, hashToken } from "../crypto/token.js";
 import { ForbiddenError } from "@/shared/errors/ForbiddenError.js";
 

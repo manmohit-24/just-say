@@ -1,0 +1,24 @@
+model User {
+  id                  String     @id @default(cuid())
+  name                String
+  username            String     @unique
+  email               String     @unique
+  passwordHash        String
+  isAcceptingMessages Boolean    @default(true)
+  status              UserStatus @default(UNVERIFIED)
+  deletionScheduledAt DateTime?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  receivedMessages    Message[]  @relation("ReceivedMessages")
+  sentMessages        Message[]  @relation("SentMessages")
+  sessions            Session[]
+
+  @@index([status, deletionScheduledAt])
+}
+
+enum UserStatus {
+  UNVERIFIED
+  ACTIVE
+  DEACTIVATED
+  DELETION_SCHEDULED
+}

@@ -1,9 +1,9 @@
 import type { ForgotPasswordDto } from "@repo/contracts";
+import { prisma } from "@repo/db";
 import { emailTemplates } from "@repo/jobs/email";
 
 import { env } from "@/config/env.js";
 
-import { prisma } from "@/shared/prisma.js";
 import { createEmailJob } from "@/shared/queues/email.js";
 
 import { generateSecureToken, hashToken } from "../crypto/token.js";

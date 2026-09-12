@@ -1,13 +1,11 @@
-import { PrismaClientKnownRequestError } from "@/generated/prisma/internal/prismaNamespace.js";
+import { Prisma } from "@repo/db";
 
 import { ErrorCode } from "@repo/contracts";
 
 import { AppError } from "@/shared/errors/index.js";
 
 const mapPrismaError = (err: unknown): AppError | null => {
-  if (!(err instanceof PrismaClientKnownRequestError)) {
-    return null;
-  }
+  if (!(err instanceof Prisma.PrismaClientKnownRequestError)) return null;
 
   switch (err.code) {
     case "P2002":
