@@ -7,8 +7,10 @@ async function deleteBatch() {
     WITH users_to_delete AS (
       SELECT id
       FROM "User"
-      WHERE status = ${UserStatus.DELETION_SCHEDULED}
-        AND "deletionScheduledAt" <= NOW()
+      WHERE status IN (
+        ${UserStatus.UNVERIFIED},
+        ${UserStatus.DELETION_SCHEDULED}
+      ) AND "deletionScheduledAt" <= NOW()
       ORDER BY "deletionScheduledAt"
       FOR UPDATE SKIP LOCKED
       LIMIT ${BATCH_SIZE}
@@ -17,7 +19,7 @@ async function deleteBatch() {
     WHERE id IN (SELECT id FROM users_to_delete)
     RETURNING id;
   `;
-
+  console.log(users);
   return users.length;
 }
 

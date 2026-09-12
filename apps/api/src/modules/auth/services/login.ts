@@ -12,6 +12,7 @@ import { generateSecureToken, hashToken } from "../crypto/token.js";
 
 import { emailTemplates } from "@repo/jobs/email";
 import { createEmailJob } from "@/shared/queues/email.js";
+import { storeEmailVerificationToken } from "../redis/emailVerification.js";
 
 const login = async (
   dto: LoginDto,
@@ -28,15 +29,16 @@ const login = async (
     },
   });
 
-  if (!user) throw new BadRequestError("Invalid credentials.");
+  if (!user || !(await verifyPassword(password, user.passwordHash)))
+    throw new BadRequestError("Invalid credentials.");
 
-  if (user.status === UserStatus.UNVERIFIED)
+  if (user.status === UserStatus.UNVERIFIED) {
+    // todo : add cooldown to token generation
+    await resendVerificationToken(user, now);
     throw new ForbiddenError("Please activate account before proceeding");
+  }
 
   const isReactivation = isReactivationLogin(user, now);
-
-  const isPasswordValid = await verifyPassword(password, user.passwordHash);
-  if (!isPasswordValid) throw new BadRequestError("Invalid credentials.");
 
   const refreshToken = generateSecureToken();
   const refreshExpiresAt = new Date(now.getTime() + ms(env.SESSION_TTL));
@@ -61,7 +63,6 @@ const login = async (
           deletionScheduledAt: null,
         },
       });
-      // Remove from deletion queue
     }
 
     return session;
@@ -104,6 +105,38 @@ function isReactivationLogin(user: User, now: Date) {
     throw new BadRequestError("Invalid credentials");
 
   return true;
+}
+
+async function resendVerificationToken(user: User, now: Date) {
+  const verificationToken = generateSecureToken();
+  const tokenExpiresAt = new Date(now.getTime() + ms("30min"));
+
+  let newDeleteSchedule = user.deletionScheduledAt;
+
+  if (!newDeleteSchedule || newDeleteSchedule < tokenExpiresAt) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        deletionScheduledAt: tokenExpiresAt,
+      },
+    });
+
+    newDeleteSchedule = tokenExpiresAt;
+  }
+
+  // store in redis after db call successfully extends deletion Schedule
+  await storeEmailVerificationToken(hashToken(verificationToken), user.id);
+
+  await createEmailJob({
+    to: user.email,
+    template: emailTemplates.emailVerification,
+    data: {
+      name: user.name,
+      verificationUrl: `${env.CLIENT_URL}/auth/verify-email?token=${verificationToken}`,
+      deletionScheduledAt: newDeleteSchedule,
+      tokenExpiresAt,
+    },
+  });
 }
 
 export { login };

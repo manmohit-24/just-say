@@ -4,7 +4,6 @@ import {
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
-  resendVerificationSchema,
   resetPasswordSchema,
   verifyEmailSchema,
 } from "@repo/contracts";
@@ -16,7 +15,6 @@ import {
   registerController,
   logoutController,
   verifyEmailController,
-  resendVerificationController,
   forgotPasswordController,
   resetPasswordController,
   refreshAccessTokenController,
@@ -30,11 +28,6 @@ authRouter.post("/register", requireUnAuth, validateBody(registerSchema), regist
 authRouter.post("/login", requireUnAuth, validateBody(loginSchema), loginController);
 authRouter.post("/logout", requireAuth, logoutController);
 authRouter.post("/verify-email", validateBody(verifyEmailSchema), verifyEmailController);
-authRouter.post(
-  "/resend-verification",
-  validateBody(resendVerificationSchema),
-  resendVerificationController
-);
 authRouter.post("/forgot-password", validateBody(forgotPasswordSchema), forgotPasswordController);
 authRouter.post("/reset-password", validateBody(resetPasswordSchema), resetPasswordController);
 authRouter.post("/refresh-access-token", refreshAccessTokenController);

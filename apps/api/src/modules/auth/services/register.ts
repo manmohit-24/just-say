@@ -13,89 +13,62 @@ import { hashPassword } from "../crypto/password.js";
 import { generateSecureToken, hashToken } from "../crypto/token.js";
 
 import { env } from "@/config/env.js";
+import { storeEmailVerificationToken } from "../redis/emailVerification.js";
 
 const register = async (dto: RegisterDto) => {
   const now = new Date();
 
   const { name, username, email, password } = dto;
 
-  // check if a verified user with this email already exists
   const existingUsers = await prisma.user.findMany({
     where: {
       OR: [{ email }, { username }],
     },
   });
 
-  const deleteUserIds: User["id"][] = [];
+  const emailTaken = existingUsers.some((user) => user.email === email);
+  if (emailTaken) throw new ConflictError("Email is already registered.");
 
-  for (const user of existingUsers) {
-    if (isUnverifiedExpiredUser(user, now)) {
-      deleteUserIds.push(user.id);
-      continue;
-    }
-
-    if (user.email === email) throw new ConflictError("Email is already registered.");
-
-    throw new ConflictError("Username is already taken.");
-  }
+  const usernameTaken = existingUsers.some((user) => user.username === username);
+  if (usernameTaken) throw new ConflictError("Username is already taken.");
 
   const passwordHash = await hashPassword(password);
-  const activationCode = generateSecureToken();
-  const activationDeadline = new Date(now.getTime() + ms("1d"));
+  const deletionScheduledAt = new Date(now.getTime() + ms("1d"));
 
   const publicId = `usr_${nanoid(16)}`;
 
-  const user = await prisma.$transaction(async (tx) => {
-    await Promise.all(
-      deleteUserIds.map((id) =>
-        tx.user.delete({
-          where: { id },
-        })
-      )
-    );
-
-    return await tx.user.create({
-      data: {
-        name,
-        username,
-        email,
-        passwordHash,
-        publicId,
-        isAcceptingMessages: false,
-        status: UserStatus.UNVERIFIED,
-        activationTokenHash: hashToken(activationCode),
-        activationTokenExpiresAt: activationDeadline,
-      },
-      select: {
-        name: true,
-        username: true,
-        email: true,
-        publicId: true,
-      },
-    });
+  const user = await prisma.user.create({
+    data: {
+      name,
+      username,
+      email,
+      passwordHash,
+      publicId,
+      isAcceptingMessages: false,
+      status: UserStatus.UNVERIFIED,
+      deletionScheduledAt,
+    },
+    select: { id: true },
   });
+
+  const verificationToken = generateSecureToken();
+  await storeEmailVerificationToken(hashToken(verificationToken), user.id);
 
   if (env.NODE_ENV === "development")
-    logger.warn(`Only printing in dev env, for testing , ${activationCode}`);
+    logger.warn(`Only printing in dev env, for testing , ${verificationToken}`);
 
   await createEmailJob({
-    to: user.email,
+    to: email,
     template: emailTemplates.emailVerification,
     data: {
-      name: user.name,
-      verificationUrl: `${env.CLIENT_URL}/auth/verify-email?token=${activationCode}`,
-      date: activationDeadline,
+      name: name,
+      verificationUrl: `${env.CLIENT_URL}/auth/verify-email?token=${verificationToken}`,
+      deletionScheduledAt: deletionScheduledAt,
+      tokenExpiresAt: new Date(now.getTime() + ms("30min")),
     },
   });
-  return user;
-};
 
-function isUnverifiedExpiredUser(user: User, now: Date) {
-  return (
-    user.status === UserStatus.UNVERIFIED &&
-    user.activationTokenExpiresAt &&
-    user.activationTokenExpiresAt < now
-  );
-}
+  return { name, username, email, publicId };
+};
 
 export { register };
