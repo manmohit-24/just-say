@@ -12,6 +12,8 @@ model User {
   receivedMessages    Message[]  @relation("ReceivedMessages")
   sentMessages        Message[]  @relation("SentMessages")
   sessions            Session[]
+
+  @@index([status, deletionScheduledAt])
 }
 
 enum UserStatus {
