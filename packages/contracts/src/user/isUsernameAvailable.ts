@@ -8,7 +8,7 @@ const isUsernameAvailableSchema = z.object({
 type IsUsernameAvailableDto = z.infer<typeof isUsernameAvailableSchema>;
 
 type IsUsernameAvailableRespose = {
-  avaliable: boolean;
+  available: boolean;
 };
 
 export { isUsernameAvailableSchema };

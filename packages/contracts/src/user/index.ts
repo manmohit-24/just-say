@@ -1,4 +1,10 @@
-export { getUserSchema, type GetUserDto, type GetUserResponse } from "./getUser.js";
+export {
+  getUserByUsernameSchema,
+  getUserByIdSchema,
+  type GetUserByIdDto,
+  type GetUserByUsernameDto,
+  type GetUserResponse,
+} from "./getUser.js";
 
 export { updateProfileSchema, type UpdateProfileDto } from "./updateProfile.js";
 

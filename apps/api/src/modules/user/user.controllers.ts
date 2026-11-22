@@ -2,14 +2,16 @@ import type { Request, Response } from "express";
 
 import type {
   AuthorizeEmailChangeResponse,
-  GetUserDto,
+  GetUserByIdDto,
+  GetUserByUsernameDto,
   GetUserResponse,
   IsUsernameAvailableRespose,
   SuccessResponse,
 } from "@repo/contracts";
 
 import {
-  getUser,
+  getUserById,
+  getUserByUsername,
   updateProfile,
   deleteProfile,
   deactivateProfile,
@@ -21,21 +23,25 @@ import {
 
 import { clearAccessCookie, clearRefreshCookie } from "../auth/cookies/clearCookies.js";
 
-const getUserController = async (req: Request<GetUserDto>, res: Response) => {
-  const { id } = req.params;
+const getUserByUsernameController = async (req: Request<GetUserByUsernameDto>, res: Response) => {
+  const { username } = req.params;
 
-  const data = await getUser({ id });
+  const data = await getUserByUsername({ username });
 
   res.status(200).json({
     success: true,
-    data: { username: data.username, name: data.name },
+    data: {
+      username: data.username,
+      name: data.name,
+      isAcceptingMessages: data.isAcceptingMessages,
+    },
   } satisfies SuccessResponse<GetUserResponse>);
 };
 
 const getMeController = async (req: Request, res: Response) => {
   const { userId } = req.auth!;
 
-  const data = await getUser({ id: userId });
+  const data = await getUserById({ id: userId });
 
   res.status(200).json({
     success: true,
@@ -84,12 +90,12 @@ const deactivateProfileController = async (req: Request, res: Response) => {
 
 const isUsernameAvailableController = async (req: Request, res: Response) => {
   const { username } = req.query;
-  const avaliable = await isUsernameAvailable({ username: username as string });
+  const available = await isUsernameAvailable({ username: username as string });
 
   res.status(200).json({
     success: true,
     data: {
-      avaliable,
+      available: available,
     },
   } satisfies SuccessResponse<IsUsernameAvailableRespose>);
 };
@@ -123,8 +129,8 @@ const verifyEmailChangeController = async (req: Request, res: Response) => {
 };
 
 export {
-  getUserController,
   getMeController,
+  getUserByUsernameController,
   updateProfileController,
   deleteProfileController,
   deactivateProfileController,

@@ -17,7 +17,7 @@ const authorizeEmailChange = async (dto: AuthorizeEmailChangeDto) => {
 
   const existingUser = await prisma.user.findUnique({ where: { email: newEmail } });
 
-  if (existingUser) throw new ConflictError("Email not avaliable");
+  if (existingUser) throw new ConflictError("Email not available");
 
   const tokenHash = hashToken(token);
 
