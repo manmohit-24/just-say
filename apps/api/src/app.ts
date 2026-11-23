@@ -40,6 +40,9 @@ app.use("/auth", authRouter);
 // User routes
 app.use("/user", userRouter);
 
+// Messaging routes
+app.use("/messages", messagingRouter);
+
 app.use((_req) => {
   throw new NotFoundError("Route not found");
 });
