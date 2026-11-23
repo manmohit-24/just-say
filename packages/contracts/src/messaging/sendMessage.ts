@@ -1,0 +1,3 @@
+import { z } from "zod";
+export const sendMessageSchema = z.object({ content: z.string().trim().min(10, "Message must be at least 10 characters long.").max(500, "Message cannot exceed 500 characters."), receiverId: z.string().min(1, "Receiver ID is required."), isAnonymous: z.boolean().optional().default(false), isTrulyAnonymous: z.boolean().optional().default(false) });
+export type SendMessageDto = z.infer<typeof sendMessageSchema>;
