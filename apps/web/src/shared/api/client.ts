@@ -1,53 +1,51 @@
-import { ErrorCode, type ApiResponse } from "@repo/contracts";
-
-import { env } from "@/config/env";
-
-import { ApiError } from "./errors";
+import { buildUrl, parseResponse, safeFetch, type Query } from "./request";
 
 type RequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
-  query?: Record<string, string | undefined>;
+  query?: Query;
   body?: unknown;
   signal?: AbortSignal | undefined;
 };
 
-// Calls the Express API from the browser and unwraps the { success, data } response.
-// Failures are thrown as ApiError, so callers only deal with one error type.
-const apiFetch = async <T>(path: string, options: RequestOptions = {}): Promise<T> => {
-  const { method = "GET", query, body, signal } = options;
+const REFRESH_PATH = "/auth/refresh-access-token";
 
-  const url = new URL(path, env.NEXT_PUBLIC_API_URL);
-  for (const [key, value] of Object.entries(query ?? {})) {
-    if (value !== undefined) url.searchParams.set(key, value);
-  }
+const send = (path: string, { method = "GET", query, body, signal }: RequestOptions) =>
+  safeFetch(buildUrl(path, query), {
+    method,
+    // the auth cookies are set by the API, so they have to be sent along
+    credentials: "include",
+    ...(body !== undefined && {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+    ...(signal && { signal }),
+  });
 
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      method,
-      // the auth cookies are set by the API, so they have to be sent along
-      credentials: "include",
-      ...(body !== undefined && {
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }),
-      ...(signal && { signal }),
+let pendingRefresh: Promise<boolean> | null = null;
+
+// Asks the API for a new access token (the refresh token cookie is sent automatically).
+// Refresh tokens can only be used once, so parallel callers share a single request.
+const refreshSession = () => {
+  pendingRefresh ??= send(REFRESH_PATH, { method: "POST" })
+    .then((res) => res.ok)
+    .catch(() => false)
+    .finally(() => {
+      pendingRefresh = null;
     });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") throw error;
-    throw new ApiError(0, "NETWORK_ERROR", "Unable to reach the server. Please try again.");
-  }
 
-  const json = (await res.json().catch(() => null)) as ApiResponse<T> | null;
-
-  if (res.ok && json?.success) return json.data;
-  if (json && !json.success) throw new ApiError(res.status, json.code, json.message, json.errors);
-
-  throw new ApiError(
-    res.status,
-    ErrorCode.INTERNAL_SERVER_ERROR,
-    "Unexpected response from the server."
-  );
+  return pendingRefresh;
 };
 
-export { apiFetch };
+// Calls the Express API from the browser. If the access token has expired, the session is
+// refreshed and the request is sent once more.
+const apiFetch = async <T>(path: string, options: RequestOptions = {}): Promise<T> => {
+  let res = await send(path, options);
+
+  if (res.status === 401 && path !== REFRESH_PATH && (await refreshSession())) {
+    res = await send(path, options);
+  }
+
+  return parseResponse<T>(res);
+};
+
+export { apiFetch, refreshSession };
