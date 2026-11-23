@@ -1,15 +1,42 @@
 import { Router } from "express";
-import { sendMessageSchema, getMessagesSchema, acceptMessagesSchema, aiSuggestionSchema, deleteMessageForUserSchema, unsendMessageSchema } from "@repo/contracts";
-import { validateBody, validateQuery } from "@/shared/middleware/validate.js";
+import {
+  sendMessageSchema,
+  getMessagesSchema,
+  deleteMessageSchema,
+  aiSuggestionSchema,
+} from "@repo/contracts";
+import { validateBody, validateParams, validateQuery } from "@/shared/middleware/validate.js";
 import { requireAuth } from "@/modules/auth/index.js";
-import { sendMessageController, getMessagesController, acceptMessagesController, getMessageAcceptanceController, aiSuggestionController, deleteMessageForUserController, unsendMessageController } from "./messaging.controllers.js";
+import {
+  sendMessageController,
+  getMessagesController,
+  deleteMessageForUserController,
+  unsendMessageController,
+  aiSuggestionController,
+} from "./messaging.controllers.js";
 const messagingRouter = Router();
-// Legacy send-message allowed guest senders; guest auth is not supported by this API yet.
-messagingRouter.post("/send-message", validateBody(sendMessageSchema), sendMessageController);
-messagingRouter.get("/get-messages", requireAuth, validateQuery(getMessagesSchema), getMessagesController);
-messagingRouter.post("/accept-messages", requireAuth, validateBody(acceptMessagesSchema), acceptMessagesController);
-messagingRouter.get("/accept-messages", requireAuth, getMessageAcceptanceController);
-messagingRouter.post("/ai-suggestion", validateBody(aiSuggestionSchema), aiSuggestionController);
-messagingRouter.delete("/delete-message-for-user", requireAuth, validateQuery(deleteMessageForUserSchema), deleteMessageForUserController);
-messagingRouter.delete("/unsend-message", requireAuth, validateQuery(unsendMessageSchema), unsendMessageController);
+
+messagingRouter.post("/", validateBody(sendMessageSchema), sendMessageController);
+
+messagingRouter.get("/", requireAuth, validateQuery(getMessagesSchema), getMessagesController);
+
+// delete for user only
+messagingRouter.patch(
+  "/:messageId",
+  requireAuth,
+  validateParams(deleteMessageSchema),
+  deleteMessageForUserController
+);
+
+// unsend message
+messagingRouter.delete(
+  "/:messageId",
+  requireAuth,
+  validateParams(deleteMessageSchema),
+  unsendMessageController
+);
+
+// ai suggestions
+messagingRouter.post("/suggestions", validateBody(aiSuggestionSchema), aiSuggestionController);
+
 export { messagingRouter };

@@ -1,3 +1,17 @@
 import { z } from "zod";
-export const sendMessageSchema = z.object({ content: z.string().trim().min(10, "Message must be at least 10 characters long.").max(500, "Message cannot exceed 500 characters."), receiverId: z.string().min(1, "Receiver ID is required."), isAnonymous: z.boolean().optional().default(false), isTrulyAnonymous: z.boolean().optional().default(false) });
-export type SendMessageDto = z.infer<typeof sendMessageSchema>;
+import { usernameSchema } from "../validation/fields.js";
+
+export const anonymitySchema = z.enum(["NONE", "ANONYMOUS", "TRULY_ANONYMOUS"]);
+
+export type Anonimity = z.infer<typeof anonymitySchema>;
+
+const sendMessageSchema = z.object({
+  content: z.string().trim().min(1, "Message is required."),
+  receiver: usernameSchema,
+  anonymity: anonymitySchema,
+});
+
+type SendMessageDto = z.infer<typeof sendMessageSchema>;
+
+export { sendMessageSchema };
+export type { SendMessageDto };
