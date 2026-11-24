@@ -8,18 +8,20 @@ const COOKIE_NAMES = {
   REFRESH: "refreshToken",
 } as const;
 
+const isProduction = env.NODE_ENV === "production";
+
 const refreshCookieOptions = {
   httpOnly: true,
-  secure: env.NODE_ENV === "production",
-  sameSite: "none",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   path: "/auth/refresh-access-token",
   maxAge: ms(env.SESSION_TTL),
 } satisfies CookieOptions;
 
 const accessCookieOptions = {
   httpOnly: true,
-  secure: env.NODE_ENV === "production",
-  sameSite: "none",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   maxAge: ms(env.ACCESS_TOKEN_EXPIRES_IN),
 } satisfies CookieOptions;
 
