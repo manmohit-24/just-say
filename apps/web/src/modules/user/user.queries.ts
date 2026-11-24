@@ -1,8 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { isUsernameAvailableSchema } from "@repo/contracts";
 import { useDebounceValue } from "usehooks-ts";
 
-import { isUsernameAvailable } from "./api";
+import {
+  authorizeEmailChange,
+  deleteProfile,
+  isUsernameAvailable,
+  requestEmailChange,
+  updateProfile,
+  verifyEmailChange,
+} from "./api";
 
 const DEBOUNCE_MS = 500;
 
@@ -35,4 +42,21 @@ const useUsernameAvailability = (username: string, currentUsername?: string) => 
   return status;
 };
 
-export { useUsernameAvailability };
+const useUpdateProfile = () => useMutation({ mutationFn: updateProfile });
+
+const useDeleteProfile = () => useMutation({ mutationFn: deleteProfile });
+
+const useRequestEmailChange = () => useMutation({ mutationFn: requestEmailChange });
+
+const useAuthorizeEmailChange = () => useMutation({ mutationFn: authorizeEmailChange });
+
+const useVerifyEmailChange = () => useMutation({ mutationFn: verifyEmailChange });
+
+export {
+  useUsernameAvailability,
+  useUpdateProfile,
+  useDeleteProfile,
+  useRequestEmailChange,
+  useAuthorizeEmailChange,
+  useVerifyEmailChange,
+};
