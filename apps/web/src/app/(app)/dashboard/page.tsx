@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 
 import { SessionRestore } from "@/modules/auth";
 import { getCurrentUser } from "@/modules/auth/server";
+import { ProfileHeader } from "@/modules/user";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
-// placeholder until the dashboard is migrated: it shows the protected page flow
 const DashboardPage = async () => {
   const user = await getCurrentUser();
 
@@ -13,10 +13,10 @@ const DashboardPage = async () => {
   if (!user) return <SessionRestore redirectTo="/dashboard" />;
 
   return (
-    <div className="mx-auto p-6 w-full max-w-6xl">
+    <>
       <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
-      <p>Welcome, {user.name}</p>
-    </div>
+      <ProfileHeader user={user} />
+    </>
   );
 };
 
