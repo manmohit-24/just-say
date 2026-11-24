@@ -51,37 +51,4 @@ authRouter.get(
   verifyEmailController
 );
 
-authRouter.get("/reset-password", (req: Request, res: Response) => {
-  const { token } = req.query;
-
-  if (typeof token !== "string" || !token) {
-    return res.status(400).send("Invalid reset link.");
-  }
-
-  res.type("html").send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Reset Password</title>
-      </head>
-      <body>
-        <h1>Reset Password</h1>
-
-        <form method="POST" action="/auth/reset-password">
-          <input type="hidden" name="token" value="${token}"/>
-
-          <label>
-            New password:
-            <input type="password" name="newPassword" required />
-          </label>
-
-          <button type="submit">
-            Reset Password
-          </button>
-        </form>
-      </body>
-    </html>
-  `);
-});
-
 export { authRouter };
