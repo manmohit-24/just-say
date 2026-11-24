@@ -9,7 +9,7 @@ const updateProfile = async (dto: UpdateProfileDto, id: string) => {
     data: {
       ...(name && { name }),
       ...(username && { username }),
-      ...(isAcceptingMessages && { isAcceptingMessages }),
+      ...(typeof isAcceptingMessages === "boolean" && { isAcceptingMessages }),
     },
   });
 };
