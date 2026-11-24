@@ -1,5 +1,6 @@
 export { AuthProvider, useCurrentUser } from "./auth.context";
 export { AuthCard } from "./components/AuthCard";
+export { AuthHeader } from "./components/AuthHeader";
 export { LoginForm } from "./components/LoginForm";
 export { RegisterForm } from "./components/RegisterForm";
 export { ForgotPasswordForm } from "./components/ForgotPasswordForm";
