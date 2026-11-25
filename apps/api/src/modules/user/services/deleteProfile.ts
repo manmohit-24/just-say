@@ -30,6 +30,7 @@ const deleteProfile = async (dto: DeleteProfileDto, id: string) => {
     await tx.user.update({
       where: { id: user.id },
       data: {
+        isAcceptingMessages: false,
         status: UserStatus.DELETION_SCHEDULED,
         deletionScheduledAt,
       },
