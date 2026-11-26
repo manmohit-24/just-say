@@ -30,6 +30,7 @@ import {
 import { Textarea } from "@/shared/components/ui/textarea";
 
 import { useAiSuggestion } from "../hooks/useAiSuggestion";
+import { TypingText } from "./TypingText";
 
 const modes: Record<
   AiSuggestionMode,
@@ -118,7 +119,7 @@ const AIMessageHelper = ({ onUse }: { onUse: (message: string) => void }) => {
         {completion && (
           <div className="relative border rounded-md bg-muted/30 p-3">
             <p className="p-4 bg-muted/30 rounded-lg font-medium text-foreground whitespace-pre-wrap">
-              {completion}
+              <TypingText text={completion} isGenerating={isGenerating} />
             </p>
 
             <div className="flex gap-2 mt-2">
