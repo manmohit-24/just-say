@@ -11,6 +11,7 @@ import { NotFoundError } from "@/shared/errors/index.js";
 import { resolveAuth } from "./modules/auth/index.js";
 import { authRouter } from "./modules/auth/index.js";
 import { userRouter } from "./modules/user/index.js";
+import { messagingRouter } from "./modules/messaging/messaging.routes.js";
 
 const app = express();
 
@@ -39,6 +40,9 @@ app.use("/auth", authRouter);
 
 // User routes
 app.use("/user", userRouter);
+
+// Messaging routes
+app.use("/messages", messagingRouter);
 
 app.use((_req) => {
   throw new NotFoundError("Route not found");

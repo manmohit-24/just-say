@@ -6,7 +6,7 @@ model Message {
   anonymity          Anonymity     @default(NONE)
   deletedForSender   Boolean       @default(false)
   deletedForReceiver Boolean       @default(false)
-  status             MessageStatus @default(PENDING)
+  status             MessageStatus @default(SENT)
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
   receiver           User?         @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: SetNull)
@@ -17,7 +17,8 @@ model Message {
 }
 
 enum MessageStatus {
-  PENDING
+  SENT
+  READ
 }
 
 enum Anonymity {
