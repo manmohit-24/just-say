@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import type { GetMessagesDto, GetMessagesResponse, SuccessResponse } from "@repo/contracts";
 import {
   sendMessage,

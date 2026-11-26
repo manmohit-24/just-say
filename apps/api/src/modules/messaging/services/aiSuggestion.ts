@@ -37,7 +37,7 @@ export const aiSuggestion = ({ prompt, mode }: AiSuggestionDto) => {
   return streamText({
     model,
     prompt,
-    instructions: SYSTEM_PROMPTS[mode],
+    instructions: `${SYSTEM_PROMPTS[mode]}. Provide messages not options, limit response capped to 100 words`,
     maxOutputTokens: 1000,
     temperature: 0.7,
   });
