@@ -42,5 +42,16 @@ export const getMessages = async ({ userId, role, cursor }: GetMessagesInput) =>
     };
   });
 
+  if (role === "RECEIVER") {
+    await prisma.message.updateMany({
+      where: {
+        id: { in: messages.map((msg) => msg.id) },
+        status: "SENT",
+        receiverId: userId,
+      },
+      data: { status: "READ" },
+    });
+  }
+
   return { messages, nextCursor };
 };
