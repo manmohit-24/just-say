@@ -15,11 +15,8 @@ const useAiSuggestion = () => {
     mutationFn: async (dto: AiSuggestionDto) => {
       setCompletion("");
 
-      const stream = await streamAiSuggestion(dto);
-      const reader = stream.pipeThrough(new TextDecoderStream()).getReader();
-
-      for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
-        setCompletion((text) => text + chunk.value);
+      for await (const delta of streamAiSuggestion(dto)) {
+        setCompletion((text) => text + delta);
       }
     },
     onError: (error) => toast.error(getErrorMessage(error, "Couldn't generate a message")),
