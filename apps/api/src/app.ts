@@ -23,7 +23,15 @@ app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true, limit: "100kb" }));
-app.use(compression());
+
+// app.ts: don't compress the AI stream
+app.use(
+  compression({
+    filter: (req, res) =>
+      req.path === "/messages/suggestions" ? false : compression.filter(req, res),
+  })
+);
+
 app.set("trust proxy", 1);
 
 // Observability

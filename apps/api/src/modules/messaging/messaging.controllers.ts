@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import type { GetMessagesDto, GetMessagesResponse, SuccessResponse } from "@repo/contracts";
 import {
   sendMessage,
@@ -8,7 +8,7 @@ import {
   unsendMessage,
 } from "./services/index.js";
 
-import { pipeTextStreamToResponse, toTextStream } from "ai";
+import { pipeUIMessageStreamToResponse, toUIMessageStream } from "ai";
 
 const sendMessageController = async (req: Request, res: Response) => {
   const userId = req.auth?.userId ?? null;
@@ -51,7 +51,7 @@ const unsendMessageController = async (req: Request, res: Response) => {
 
 const aiSuggestionController = async (req: Request, res: Response) => {
   const result = aiSuggestion(req.body);
-  pipeTextStreamToResponse({ response: res, stream: toTextStream(result) });
+  pipeUIMessageStreamToResponse({ response: res, stream: toUIMessageStream(result) });
 };
 
 export {

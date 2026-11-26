@@ -1,3 +1,4 @@
+import { ApiError } from "./errors";
 import { buildUrl, parseResponse, safeFetch, type Query } from "./request";
 
 type RequestOptions = {
@@ -36,16 +37,29 @@ const refreshSession = () => {
   return pendingRefresh;
 };
 
-// Calls the Express API from the browser. If the access token has expired, the session is
-// refreshed and the request is sent once more.
-const apiFetch = async <T>(path: string, options: RequestOptions = {}): Promise<T> => {
-  let res = await send(path, options);
+// If the access token has expired, the session is refreshed and the request is sent once more.
+const sendWithRefresh = async (path: string, options: RequestOptions) => {
+  const res = await send(path, options);
 
   if (res.status === 401 && path !== REFRESH_PATH && (await refreshSession())) {
-    res = await send(path, options);
+    return send(path, options);
   }
 
-  return parseResponse<T>(res);
+  return res;
 };
 
-export { apiFetch, refreshSession };
+// Calls the Express API from the browser and unwraps the { success, data } response.
+const apiFetch = async <T>(path: string, options: RequestOptions = {}): Promise<T> =>
+  parseResponse<T>(await sendWithRefresh(path, options));
+
+// Same call, but returns the raw body for endpoints that stream text.
+const apiStream = async (path: string, options: RequestOptions = {}) => {
+  const res = await sendWithRefresh(path, options);
+
+  if (!res.ok) await parseResponse<never>(res);
+  if (!res.body) throw new ApiError(res.status, "NETWORK_ERROR", "The server sent an empty reply.");
+
+  return res.body;
+};
+
+export { apiFetch, apiStream, refreshSession };
