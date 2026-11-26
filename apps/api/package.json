@@ -12,9 +12,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.126",
     "@repo/contracts": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/jobs": "workspace:*",
+    "ai": "^7.0.181",
     "argon2": "^0.44.0",
     "bullmq": "^6.3.4",
     "compression": "^1.8.1",

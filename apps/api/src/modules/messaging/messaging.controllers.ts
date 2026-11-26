@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import type { GetMessagesDto, GetMessagesResponse, SuccessResponse } from "@repo/contracts";
 import {
   sendMessage,
@@ -7,6 +7,8 @@ import {
   deleteMessageForUser,
   unsendMessage,
 } from "./services/index.js";
+
+import { pipeTextStreamToResponse, toTextStream } from "ai";
 
 const sendMessageController = async (req: Request, res: Response) => {
   const userId = req.auth?.userId ?? null;
@@ -48,10 +50,8 @@ const unsendMessageController = async (req: Request, res: Response) => {
 };
 
 const aiSuggestionController = async (req: Request, res: Response) => {
-  // TODO: Preserve legacy streaming response after migrating the service.
-  const data = await aiSuggestion(req.body);
-
-  res.status(200).json({ success: true, data } satisfies SuccessResponse<unknown>);
+  const result = aiSuggestion(req.body);
+  pipeTextStreamToResponse({ response: res, stream: toTextStream(result) });
 };
 
 export {

@@ -16,6 +16,7 @@ export const aiSuggestionModeSchema = z.enum([
 export const aiSuggestionSchema = z.object({
   prompt: z
     .string()
+    .trim()
     .min(1)
     .min(10, "Prompt should atleast be of 10 characters.")
     .max(500, "Prompt cannot exceed 500 characters."),
