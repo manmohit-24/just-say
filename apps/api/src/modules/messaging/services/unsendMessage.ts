@@ -1,12 +1,15 @@
 import type { DeleteMessageDto } from "@repo/contracts";
+import { prisma } from "@repo/db";
 
 interface UnsendMessageInput extends DeleteMessageDto {
   userId: string;
 }
 
-export const unsendMessage = async (_input: UnsendMessageInput) => {
-  console.log(_input);
-
-  // TODO: Migrate sender-only authorization and unsend semantics.
-  throw new Error("unsendMessage service is not implemented");
+export const unsendMessage = async ({ userId, messageId }: UnsendMessageInput) => {
+  await prisma.message.delete({
+    where: {
+      id: messageId,
+      senderId: userId,
+    },
+  });
 };
