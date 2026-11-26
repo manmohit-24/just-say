@@ -35,6 +35,7 @@ const MessageCard = ({ message, role }: { message: MessageListItem; role: Messag
   // the other person in the conversation; a hidden sender (anonymous message) is missing
   const counterpart = role === "SENDER" ? message.receiver : message.sender;
   const name = counterpart?.name ?? "Anonymous";
+  const createdDate = new Date(message.createdAt);
 
   const closeDialog = () => setDialog(null);
 
@@ -96,8 +97,8 @@ const MessageCard = ({ message, role }: { message: MessageListItem; role: Messag
           <div className="flex items-center gap-1 text-xs text-muted-foreground pt-2 border-t">
             <Clock className="h-3 w-3" />
             {/* the relative time can differ between the server render and the browser */}
-            <time dateTime={message.createdAt} suppressHydrationWarning>
-              {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
+            <time dateTime={createdDate.toDateString()} suppressHydrationWarning>
+              {formatDistanceToNow(createdDate, { addSuffix: true })}
             </time>
           </div>
         </CardContent>

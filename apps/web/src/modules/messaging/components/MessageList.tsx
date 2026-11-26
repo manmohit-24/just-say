@@ -18,7 +18,7 @@ import { MessageCard } from "./MessageCard";
 import { MessageCardSkeleton } from "./MessageCardSkeleton";
 
 const titles: Record<MessageRole, string> = {
-  RECIEVER: "Messages I Received",
+  RECEIVER: "Messages I Received",
   SENDER: "Messages Sent By Me",
 };
 

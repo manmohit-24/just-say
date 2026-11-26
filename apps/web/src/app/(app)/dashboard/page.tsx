@@ -16,7 +16,7 @@ const DashboardPage = async () => {
   if (!user) return <SessionRestore redirectTo="/dashboard" />;
 
   // the first page of received messages is loaded here, so it is part of the first render
-  const initialReceived = await getInitialMessages("RECIEVER");
+  const initialReceived = await getInitialMessages("RECEIVER");
 
   return (
     <>

@@ -22,7 +22,7 @@ const MessageInbox = ({ initialReceived }: { initialReceived: GetMessagesRespons
     </TabsList>
 
     <TabsContent value="received">
-      <MessageList role="RECIEVER" initialPage={initialReceived} />
+      <MessageList role="RECEIVER" initialPage={initialReceived} />
     </TabsContent>
     <TabsContent value="sent">
       <MessageList role="SENDER" initialPage={null} />
