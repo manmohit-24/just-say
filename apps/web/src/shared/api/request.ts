@@ -1,13 +1,13 @@
 import { ErrorCode, type ApiResponse } from "@repo/contracts";
 
-import { env } from "@/config/env";
+import { apiUrl } from "@/config/env";
 
 import { ApiError } from "./errors";
 
 type Query = Record<string, string | undefined>;
 
-const buildUrl = (path: string, query?: Query) => {
-  const url = new URL(path, env.NEXT_PUBLIC_API_URL);
+const buildUrl = (path: string, query?: Query, isServer = false) => {
+  const url = new URL(path, apiUrl(isServer));
 
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value !== undefined) url.searchParams.set(key, value);
