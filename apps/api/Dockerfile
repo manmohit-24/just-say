@@ -22,8 +22,12 @@ ENV NODE_ENV=production
 RUN pnpm --filter @repo/api... build
 
 FROM node:22-alpine AS runner
+ENV PNPM_HOME="/pnpm" PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 WORKDIR /app
 ENV NODE_ENV=production API_PORT=3001
+COPY --from=builder --chown=node:node /app/package.json ./package.json
+COPY --from=builder --chown=node:node /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=builder --chown=node:node /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder --chown=node:node /app/apps/api/dist ./apps/api/dist
 COPY --from=builder --chown=node:node /app/packages/contracts/package.json ./packages/contracts/package.json
