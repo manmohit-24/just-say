@@ -7,7 +7,7 @@ RUN corepack enable
 FROM base AS pruned
 WORKDIR /app
 COPY . .
-RUN pnpm dlx turbo@2.10.4 prune @repo/worker --docker
+RUN pnpm dlx turbo@2.11.13 prune @repo/worker --docker
 
 FROM base AS deps
 WORKDIR /app
