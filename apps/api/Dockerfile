@@ -18,6 +18,8 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --frozen-lo
 FROM deps AS builder
 WORKDIR /app
 COPY --from=pruned /app/out/full/ ./
+# turbo prune omits root config files that aren't declared as package dependencies.
+COPY --from=pruned /app/tsconfig.base.json ./tsconfig.base.json
 ENV NODE_ENV=production
 RUN pnpm --filter @repo/api... build
 
