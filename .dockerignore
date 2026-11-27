@@ -1,0 +1,26 @@
+# Dependencies and build output
+**/node_modules
+**/.next
+**/dist
+**/build
+**/.turbo
+.pnpm-store
+.turbo
+
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+
+.git
+.github
+.husky
+.vscode
+.idea
+*.log
+.DS_Store
+
+**/coverage
+**/tmp
+**/temp
