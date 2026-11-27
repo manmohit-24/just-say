@@ -12,7 +12,8 @@ RUN pnpm dlx turbo@2.11.13 prune @repo/web --docker
 FROM base AS deps
 WORKDIR /app
 COPY --from=pruned /app/out/json/ ./
-COPY --from=pruned /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+# Use the repository lockfile: Turbo's pnpm 11 pruned lockfile misses importer specifiers.
+COPY pnpm-lock.yaml ./pnpm-lock.yaml
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --frozen-lockfile
 
 FROM deps AS builder
