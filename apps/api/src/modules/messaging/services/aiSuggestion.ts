@@ -1,6 +1,7 @@
-import { google } from "@ai-sdk/google";
-import type { AiSuggestionDto, AiSuggestionMode } from "@repo/contracts";
 import { streamText } from "ai";
+import { google } from "@ai-sdk/google";
+
+import type { AiSuggestionDto, AiSuggestionMode } from "@repo/contracts";
 
 const SYSTEM_PROMPTS: { [key in AiSuggestionMode]: string } = {
   fun_compliment:
@@ -31,7 +32,7 @@ const SYSTEM_PROMPTS: { [key in AiSuggestionMode]: string } = {
   default: "Write short, simple, and positive messages.",
 };
 
-const model = google("gemini-2.5-flash");
+const model = google("gemini-3.5-flash-lite");
 
 export const aiSuggestion = ({ prompt, mode }: AiSuggestionDto) => {
   return streamText({

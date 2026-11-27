@@ -6,7 +6,10 @@ import { AppError } from "@/shared/errors/index.js";
 import { logger } from "@/shared/logger.js";
 import { mapPrismaError, mapZodError } from "@/shared/errors/mappers/index.js";
 
-const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+const errorHandler = (err: unknown, _req: Request, res: Response, next: NextFunction) => {
+  // Errors that occur after sending response headers (e.g: mid-streaming errors)
+  if (res.headersSent) return next(err);
+
   // handling Prisma Error
   const error = mapPrismaError(err) ?? mapZodError(err) ?? err;
 

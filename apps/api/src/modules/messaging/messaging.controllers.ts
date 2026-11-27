@@ -1,5 +1,9 @@
 import type { Request, Response } from "express";
+import { pipeUIMessageStreamToResponse, toUIMessageStream } from "ai";
+
 import type { GetMessagesDto, GetMessagesResponse, SuccessResponse } from "@repo/contracts";
+
+import { logger } from "@/shared/logger.js";
 import {
   sendMessage,
   getMessages,
@@ -7,8 +11,6 @@ import {
   deleteMessageForUser,
   unsendMessage,
 } from "./services/index.js";
-
-import { pipeUIMessageStreamToResponse, toUIMessageStream } from "ai";
 
 const sendMessageController = async (req: Request, res: Response) => {
   const userId = req.auth?.userId ?? null;
@@ -51,7 +53,20 @@ const unsendMessageController = async (req: Request, res: Response) => {
 
 const aiSuggestionController = async (req: Request, res: Response) => {
   const result = aiSuggestion(req.body);
-  pipeUIMessageStreamToResponse({ response: res, stream: toUIMessageStream(result) });
+
+  pipeUIMessageStreamToResponse({
+    response: res,
+    stream: toUIMessageStream({
+      stream: result.stream,
+      onError: (error) => {
+        // Log the real error server-side.
+        logger.error({ err: error }, "AI suggestion stream failed");
+
+        // Send only a safe message to the frontend.
+        return "AI generation failed. Please try again later.";
+      },
+    }),
+  });
 };
 
 export {
