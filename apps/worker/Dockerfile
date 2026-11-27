@@ -21,23 +21,11 @@ COPY --from=pruned /app/out/full/ ./
 ENV NODE_ENV=production
 RUN pnpm --filter @repo/worker... build
 
+# Keep the pruned workspace layout intact in the runtime image.
+# This preserves pnpm's workspace symlinks and their targets.
 FROM node:22-alpine AS runner
-ENV PNPM_HOME="/pnpm" PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder --chown=node:node /app/package.json ./package.json
-COPY --from=builder --chown=node:node /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY --from=builder --chown=node:node /app/apps/worker/package.json ./apps/worker/package.json
-COPY --from=builder --chown=node:node /app/apps/worker/dist ./apps/worker/dist
-COPY --from=builder --chown=node:node /app/packages/db/package.json ./packages/db/package.json
-COPY --from=builder --chown=node:node /app/packages/db/dist ./packages/db/dist
-COPY --from=builder --chown=node:node /app/packages/db/src/generated ./packages/db/src/generated
-COPY --from=builder --chown=node:node /app/packages/jobs/package.json ./packages/jobs/package.json
-COPY --from=builder --chown=node:node /app/packages/jobs/dist ./packages/jobs/dist
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/apps/worker/node_modules ./apps/worker/node_modules
-COPY --from=builder --chown=node:node /app/packages/db/node_modules ./packages/db/node_modules
-COPY --from=builder --chown=node:node /app/packages/jobs/node_modules ./packages/jobs/node_modules
+COPY --from=builder --chown=node:node /app/ ./
 USER node
 CMD ["node", "apps/worker/dist/index.js"]
