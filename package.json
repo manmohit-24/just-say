@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "prepare": "husky"
+    "prepare": "if [ -d .git ] && [ -x node_modules/.bin/husky ]; then husky; fi"
   },
   "lint-staged": {
     "*.{js,cjs,mjs,ts,tsx,jsx}": [

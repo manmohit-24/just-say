@@ -1,6 +1,17 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { z } from "zod";
 import ms, { type StringValue } from "ms";
+
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({
+    path: path.resolve(currentDir, "../../../../.env"),
+  });
+}
 
 // using ms inbuilt parse function indirectly to validate durations
 const isMSDuration = (value: string): value is StringValue =>
@@ -13,17 +24,17 @@ const envSchema = z
       "NODE_ENV must be either 'development' or 'production'."
     ),
 
-    PORT: z
+    API_PORT: z
       .string()
       .trim()
-      .min(1, "PORT is required.")
+      .min(1, "API_PORT is required.")
       .transform(Number)
       .pipe(
         z
           .number()
-          .int("PORT must be an integer.")
-          .min(1, "PORT must be between 1 and 65535.")
-          .max(65535, "PORT must be between 1 and 65535.")
+          .int("API_PORT must be an integer.")
+          .min(1, "API_PORT must be between 1 and 65535.")
+          .max(65535, "API_PORT must be between 1 and 65535.")
       ),
 
     CLIENT_URL: z

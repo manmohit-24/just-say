@@ -12,8 +12,8 @@ try {
   await prisma.$connect();
   await redis.connect();
 
-  server = app.listen(env.PORT, () => {
-    logger.info({ port: env.PORT, env: env.NODE_ENV }, "Server started");
+  server = app.listen(env.API_PORT, () => {
+    logger.info({ port: env.API_PORT, env: env.NODE_ENV }, "Server started");
   });
 } catch (error) {
   logger.fatal(error, "Failed to start server.");
