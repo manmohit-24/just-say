@@ -9,5 +9,5 @@ COPY packages/db/package.json ./packages/db/package.json
 COPY packages/db/prisma.config.ts ./packages/db/prisma.config.ts
 COPY packages/db/prisma ./packages/db/prisma
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --frozen-lockfile --filter @repo/db...
-WORKDIR /app/packages/db
-CMD ["pnpm", "migrate:deploy"]
+WORKDIR /app
+CMD ["pnpm", "--filter", "@repo/db", "migrate:deploy"]
