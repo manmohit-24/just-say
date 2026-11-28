@@ -30,6 +30,10 @@ RUN pnpm build --filter=@repo/api...
 FROM builder AS deploy
 RUN pnpm --filter @repo/api deploy --prod /prod/api --legacy
 
+# Database migrations
+FROM builder AS migrator
+CMD ["pnpm", "--filter", "@repo/db", "migrate:deploy"]
+
 # Production runtime
 FROM base AS runner
 WORKDIR /app
