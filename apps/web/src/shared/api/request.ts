@@ -6,8 +6,8 @@ import { ApiError } from "./errors";
 
 type Query = Record<string, string | undefined>;
 
-const buildUrl = (path: string, query?: Query) => {
-  const url = new URL(path, env.NEXT_PUBLIC_API_URL);
+const buildUrl = (path: string, query?: Query, baseUrl = env.NEXT_PUBLIC_API_URL) => {
+  const url = new URL(path, baseUrl);
 
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value !== undefined) url.searchParams.set(key, value);
