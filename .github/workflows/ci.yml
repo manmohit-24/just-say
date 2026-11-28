@@ -19,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    env: # DUMMY DATABASE URL SO GENERATE NOT FAILS
+      DATABASE_URL: postgresql://user:password@localhost:5432/db
+
     steps:
       - uses: actions/checkout@v5
 
@@ -34,8 +37,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm --filter db generate
-        env: # DUMMY DATABASE URL SO GENERATE NOT FAILS
-          DATABASE_URL: postgresql://user:password@localhost:5432/db
 
       - run: pnpm format:check
       - run: pnpm lint

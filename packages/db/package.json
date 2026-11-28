@@ -21,8 +21,7 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "migrate:status": "prisma migrate status",
-    "studio": "prisma studio",
-    "postinstall": "prisma skills sync || exit 0"
+    "studio": "prisma studio"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",
