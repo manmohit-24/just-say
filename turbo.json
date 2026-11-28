@@ -7,14 +7,21 @@
       "persistent": true
     },
 
+    "generate": {
+      "cache": false,
+      "env": ["DATABASE_URL", "NODE_ENV"]
+    },
+
     "build": {
-      "dependsOn": ["^build", "typecheck"],
+      "dependsOn": ["^build", "typecheck", "generate"],
       "outputs": [".next/**", "dist/**"]
     },
 
     "start": { "dependsOn": ["^build", "build"] },
     "test": { "dependsOn": ["^build", "build"] },
 
-    "typecheck": { "dependsOn": ["^build"] }
+    "typecheck": {
+      "dependsOn": ["^build", "generate"]
+    }
   }
 }

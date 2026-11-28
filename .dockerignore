@@ -1,0 +1,42 @@
+# Dependencies and build output
+**/.next
+**/dist
+**/build
+**/.turbo
+**/out
+
+.pnpm-store
+
+# Generated or local files: the image creates them itself, stale copies would only get in the way
+**/generated/prisma
+**/*.tsbuildinfo
+**/next-env.d.ts
+
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+
+.git
+.github
+.husky
+.vs OS/editor files
+.DS_Store
+code
+.idea
+*.log
+.DS_Store
+Thumbs.db
+
+**/coverage
+**/tmp
+**/temp
+
+# Git
+.git
+.gitignore
+
+# Caches
+.cache
+coverage
