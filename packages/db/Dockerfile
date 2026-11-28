@@ -3,6 +3,8 @@
 FROM node:22-alpine
 ENV PNPM_HOME="/pnpm" PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+# the Prisma migration engine needs OpenSSL, which the Alpine image does not include
+RUN apk add --no-cache openssl
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/db/package.json ./packages/db/package.json
