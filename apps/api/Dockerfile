@@ -22,6 +22,9 @@ COPY --from=pruned /app/out/full/ ./
 # turbo prune omits root config files that aren't declared as package dependencies.
 COPY --from=pruned /app/tsconfig.base.json ./tsconfig.base.json
 ENV NODE_ENV=production
+# Prisma only needs a database URL to load its config, generate never connects to it.
+# The generated client is gitignored, so it has to be created here (CI does the same).
+RUN DATABASE_URL=postgresql://build:build@localhost:5432/build pnpm --filter @repo/db generate
 RUN pnpm --filter @repo/api... build
 
 # Keep the pruned workspace layout intact in the runtime image.
