@@ -22,7 +22,8 @@ COPY --from=pruned /app/out/full/ ./
 ARG NEXT_PUBLIC_API_URL=http://localhost:3001
 ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL NODE_ENV=production
-RUN pnpm --filter @repo/web build
+# the trailing ... also builds the workspace packages the web app imports (@repo/contracts)
+RUN pnpm --filter @repo/web... build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
