@@ -8,7 +8,7 @@ const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config({
-    path: path.resolve(currentDir, "../../../.env"),
+    path: path.resolve(currentDir, "../../.env"),
   });
 }
 
